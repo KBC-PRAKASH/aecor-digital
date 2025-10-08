@@ -30,12 +30,15 @@ class AuthRepository implements UserInterface {
                 return response()->apiError("You have some validation errors", 422, $validator->errors());
             }
 
-            User::create($request->all());
-            return response()->apiSuccess($request->all(), "User registered successfully", 201);
+            $user = User::create($request->all());
+            return response()->apiSuccess([
+                'name' => $user->name,
+                'email' => $user->email
+            ], "User registered successfully", 201);
         
 
         } catch(Exception $e) {
-            return response()->apiCatchError();
+            return response()->apiCatchError($e);
         }
     }
 
@@ -67,7 +70,7 @@ class AuthRepository implements UserInterface {
             return $this->respondWithToken($token);
 
         } catch(Exception $e) {
-            return response()->apiCatchError();
+            return response()->apiCatchError($e);
         }
     }
 
